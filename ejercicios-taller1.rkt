@@ -3,39 +3,31 @@ Emily Nuñez - 2240156|#
 
 #lang eopl
 
-#|Documentar procedimientos, gramáticas, funciones auxiliares, casos de prueba (min 2)|#
-
 #|Punto 1
 invert: List x predicado -> List
 usage: (invert L P) = Lista con pares invertidos (y,x) que cumplen el predicado P
+
+Gramática:
+
+Casos de prueba:
+(invert '((3 2) (4 2) (1 5) (2 8)) even?)
+(invert '((6 9) (10 90) (82 7) ) odd?)
+(invert '((10 9) (0 0) (15 15) (0 0) (8 8) (15 1048) (24 24) ) zero?)
+(invert '((10 8) (-15 8) (-2 -8) (3 -14) (-40 -25) ) negative?)
 |#
 
 (define invert
     (lambda (L P)
         (cond
             [(null? L) L]
-
-            [(null? (cdr L)) 
-                (if (and (P (caar L)) (P (cadr (car L)))) 
-                    (cons (cons (cadr (car L)) (cons (caar L) '())) '())
-                    '()
-                )                
-            ]
-
-            [(not(null? (cdr L)))
-                (if (and (P (caar L)) (P (cadr (car L)))) 
-                    (cons (cons (cadr (car L)) (cons (caar L) '())) (invert (cdr L) P))
-                    (cons '() (invert (cdr L) P))
-                )                
-            ]             
+            [
+                (and (P (caar L)) (P (cadr (car L)))) 
+                (cons (cons (cadr (car L)) (cons (caar L) '())) (invert (cdr L) P))
+            ]            
+            [else (invert (cdr L) P)]
         )
     )
 )
-
-#|Casos de prueba:
-(invert '((3 2) (4 2) (1 5) (2 8)) even?)
-|#
-
 
 #|---------------------------------------------------------------------------------
 Punto 2
@@ -64,22 +56,44 @@ si este cumple el predicado P
 Punto 4
 filter-in: predicado x List -> List
 usage: (filter-in P L) = Lista con los elementos de L que cumplen el predicado P
+
+Casos de prueba:
+(filter-in number? '(a 2 (1 3) b 7))
+(filter-in string? '(a b u "univalle" "racket" "flp" 28 90 (1 2 3)))
 |#
 (define filter-in
     (lambda (P L)
-        (display "Prueba")    
+        (cond
+            [(null? L) empty]
+            [(P (car L)) 
+                (append (list (car L)) (filter-in P (cdr L)))
+            ]
+            [else (filter-in P (cdr L))]
+        )   
     )
 )
 
 #|---------------------------------------------------------------------------------
 Punto 5
 list-index: predicado x List -> SchemeVal
-usage: (list-index P L) = Primer elemento de L que cumple con P, o #f si no hay ningún
+usage: (list-index P L) = posición del primer elemento de L que cumple con P, o #f si no hay ningún
 elemento que lo cumpla
+
+Casos de prueba: 
+(list-index number? '(a 2 (1 3) b 7))
+(list-index symbol? '(a (b c) 17 foo))
+(list-index symbol? '(1 2 (a b) 3))
 |#
 (define list-index
     (lambda (P L)
-        (display "Prueba")    
+        (cond
+            ;Retorna elemento, no posición
+            [(null? L) #f]
+            [(P (car L)) 
+                (cons (car L) '())
+            ]
+            [else (list-index P (cdr L))]
+        )     
     )
 )
 
