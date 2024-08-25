@@ -33,10 +33,18 @@ Casos de prueba:
 Punto 2
 down: List -> List
 usage: (down L) = Lista con cada elemento en un nivel más de paréntesis
+
+Casos de prueba:
+(down '(1 2 3))
+(down '((una) (buena) (idea)))
+(down '(un (objeto (mas)) complicado))
 |#
 (define down
     (lambda (L)
-        (display "Prueba")    
+        (cond
+            [(null? L) L]
+            [else (append (list(list (car L))) (down (cdr L)))]
+        ) 
     )
 )
 
@@ -44,11 +52,28 @@ usage: (down L) = Lista con cada elemento en un nivel más de paréntesis
 Punto 3
 list-set: List x Int x List x predicado -> List
 usage: (list-set L n x P) = Lista con el elemento x añadido en la posición n de L
-si este cumple el predicado P
+el elemento original en esta posición cumple el predicado P
+
+Casos de prueba:
+(list-set '(5 8 7 6) 2 '(1 2) odd?)
+(list-set '(5 8 7 6) 2 '(1 2) even?)
 |#
 (define list-set
     (lambda (L n x P)
-        (display "Prueba")    
+        (letrec
+            ([contador
+                (lambda (L n x P i)
+                    (cond
+                        [(null? L) L]
+                        [(and(eq? n i) (P (car L)))
+                            (append (list x) (contador (cdr L) n x P (+ i 1)))                       
+                        ]
+                        [else (append (list (car L)) (contador (cdr L) n x P (+ i 1)))]
+                    )                
+                )
+            ])
+            (contador L n x P 0)
+        )  
     )
 )
 
@@ -86,25 +111,55 @@ Casos de prueba:
 |#
 (define list-index
     (lambda (P L)
-        (cond
-            ;Retorna elemento, no posición
-            [(null? L) #f]
-            [(P (car L)) 
-                (cons (car L) '())
-            ]
-            [else (list-index P (cdr L))]
-        )     
+        (letrec
+            ([contador
+                (lambda (P L n)
+                    (cond
+                        [(null? L) #f]
+                        [(P (car L)) (cons n '())]
+                        [else (contador P (cdr L)(+ n 1))]
+                    )                
+                )
+            ])
+            (contador P L 0)
+        )
     )
 )
+
+(define contador
+    (lambda (P L n)
+        (cond
+            [(null? L) #f]
+            [(P (car L)) (cons n '())]
+            [else (contador P (cdr L)(+ n 1))]
+        )
+    
+    )
+)
+
 
 #|---------------------------------------------------------------------------------
 Punto 6
 swapper: SchemeVal x SchemeVal x List -> List
 usage: (swapper E1 E2 L) = Lista con las instancias de E1 reemplazadas por E2
+
+Casos de prueba: 
+(swapper 'a 'd '(a b c d))
+(swapper 'a 'd '(a d () c d))
+(swapper 'x 'y '(y y x y x y x x y))
 |#
 (define swapper
     (lambda (E1 E2 L)
-        (display "Prueba")    
+        (cond
+            [(null? L) L]
+            [(eqv? E1 (car L)) 
+                (append (list E2) (swapper E1 E2 (cdr L)))
+            ]
+            [(eqv? E2 (car L)) 
+                (append (list E1) (swapper E1 E2 (cdr L)))
+            ]
+            [else (append (list (car L)) (swapper E1 E2 (cdr L)))]
+        )    
     )
 )
 
@@ -115,7 +170,15 @@ usage: (cartesian-product L1 L2) = Lista de tuplas con el producto cartesiano en
 |#
 (define cartesian-product
     (lambda (L1 L2)
-        (display "Prueba")    
+        (letrec 
+            (
+                []
+                []
+            )
+            (
+                ;cuerpo
+            )
+        )
     )
 )
 
@@ -134,7 +197,8 @@ para los cuales evaluar a en F retorna b
 #|---------------------------------------------------------------------------------
 Punto 9
 inversions: List -> Int
-usage: (inversions L) = número de Inversiones de L
+usage: (inversions L) = número de Inversiones de L. Se dice una pareja (a1 a2) es inversión si la
+posición en la lista de a1 es menor a la de a2 y a1 es mayor que a2
 |#
 (define inversions
     (lambda (L)
@@ -145,12 +209,22 @@ usage: (inversions L) = número de Inversiones de L
 #|---------------------------------------------------------------------------------
 Punto 10
 up: List -> Lista
-usage: (up L) = Lista con cada elemento en un nivel menos de paréntesis. Si el emlemento no tiene
+usage: (up L) = Lista con cada elemento en un nivel menos de paréntesis. Si el elemento no tiene
 paréntesis, no se le hacen modificaciones
+
+Casos de prueba:
+(up '((1 2) (3 4)))
+(up '((x (y)) z))
 |#
 (define up
     (lambda (L)
-        (display "Prueba")    
+        (cond
+            [(null? L) L]
+            [(list? (car L))
+                (append (car L) (up(cdr L)))
+            ]
+            [else (cons (car L) (up(cdr L)))]
+        )    
     )
 )
 
@@ -220,7 +294,7 @@ simpson-rule: función x Int x Int x Int -> Int
 usage: (simpson-rule f a b n) = Calcula el resultado de la integral de f entre a y b para un entero par n
 |#
 (define simpson-rule
-    (lambda (L1 L2)
+    (lambda (f a b n)
         (display "Prueba")    
     )
 )
