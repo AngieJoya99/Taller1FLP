@@ -126,18 +126,6 @@ Casos de prueba:
     )
 )
 
-(define contador
-    (lambda (P L n)
-        (cond
-            [(null? L) #f]
-            [(P (car L)) (cons n '())]
-            [else (contador P (cdr L)(+ n 1))]
-        )
-    
-    )
-)
-
-
 #|---------------------------------------------------------------------------------
 Punto 6
 swapper: SchemeVal x SchemeVal x List -> List
@@ -303,10 +291,13 @@ Punto 13
 operate: List x List -> Int
 usage: (operate lrators lrands) = Resultado de aplicar sucesivamente las operaciones 
 en lrators a los valores en lrands
+
+Casos de prueba: 
+(operate (list + * + - *) '(1 2 8 4 11 6))
 |#
 (define operate
     (lambda (lrators lrands)
-        (display "Prueba")    
+        (display "Prueba") 
     )
 )
 
