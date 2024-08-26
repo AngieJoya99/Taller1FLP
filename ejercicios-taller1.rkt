@@ -66,7 +66,7 @@ Casos de prueba:
                     (cond
                         [(null? L) L]
                         [(and(eq? n i) (P (car L)))
-                            (append (list x) (contador (cdr L) n x P (+ i 1)))                       
+                            (append (list x) (contador (cdr L) n x P (+ i 1)))
                         ]
                         [else (append (list (car L)) (contador (cdr L) n x P (+ i 1)))]
                     )                
@@ -167,17 +167,30 @@ Casos de prueba:
 Punto 7
 cartesian-product: List x List -> List
 usage: (cartesian-product L1 L2) = Lista de tuplas con el producto cartesiano entre L1 y L2
+
+Casos de prueba:
+(cartesian-product '(a b c) '(x y))
 |#
 (define cartesian-product
     (lambda (L1 L2)
-        (letrec 
-            (
-                []
-                []
-            )
-            (
-                ;cuerpo
-            )
+        (letrec
+            ([recorrerL2
+                (lambda (x L2)
+                    (cond
+                        [(null? L2) L2]
+                        [else (cons (list x (car L2)) (recorrerL2 x (cdr L2)))]
+                    )                                   
+                )
+            ]
+            [recorrerL1
+                (lambda (L1 L2)
+                    (cond
+                        [(null? L1) L1]
+                        [else (append (recorrerL2 (car L1) L2) (recorrerL1 (cdr L1) L2))]
+                    )                
+                )
+            ])
+            (recorrerL1 L1 L2)
         )
     )
 )
@@ -187,10 +200,35 @@ Punto 8
 mapping: función x List x List -> List
 usage: (mapping F L1 L2) = Lista de pares (a,b) siendo a elemento de L1 y b elemento de L2, 
 para los cuales evaluar a en F retorna b
+
+Casos de prueba: 
+(mapping (lambda (d) (* d 2)) (list 1 2 3) (list 2 4 6))
+((1 2) (2 4) (3 6))
 |#
 (define mapping
     (lambda (F L1 L2)
-        (display "Prueba")    
+        (letrec
+            ([recorrerL2
+                (lambda (x L2)
+                    (cond
+                        [(null? L2) L2]
+                        [else (if (equal? (F x) (car L2))
+                            (list (list x (car L2)))  ; Si F(x) es igual a (car L2), devuelve el par (x (car L2)) como una lista
+                            (recorrerL2 x (cdr L2))
+                        )]
+                    )                                   
+                )
+            ]
+            [recorrerL1
+                (lambda (L1 L2)
+                    (cond
+                        [(null? L1) L1]
+                        [else (append (recorrerL2 (car L1) L2) (recorrerL1 (cdr L1) L2))]
+                    )                
+                )
+            ])
+            (recorrerL1 L1 L2)
+        )    
     )
 )
 
@@ -233,10 +271,18 @@ Punto 11
 zip: función x List x List -> List
 usage: (zip F L1 L2) = Lista donde la cada posición i es el resultado de evaluar F con el elemento i
 de L1 y el elemento i de L2
+
+Casos de prueba:
+(zip + '(1 4) '(6 2))
+(zip * '(11 5 6) '(10 9 8))
 |#
 (define zip
     (lambda (F L1 L2)
-        (display "Prueba")    
+        (cond
+            [(null? L1) L1]
+            [(null? L2) L2]
+            [else (cons (F (car L1) (car L2)) (zip F (cdr L1) (cdr L2)))]
+        )    
     )
 )
 
