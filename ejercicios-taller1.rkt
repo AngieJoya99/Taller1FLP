@@ -352,29 +352,9 @@ cadenas de texto left y right. Si el número no se encuentra, retorna una lista 
 |#
 (define path
     (lambda (n BST)
-        (letrec
-            ([contador
-                (lambda (BST i)
-                    (cond
-                        [(null? BST) BST]
-                        [(eq? (car BST) (n)) (BST)]
-                        [if (eq? (caadr BST) (n)) 
-                            (izquierda) 
-                            ()
-                        ]
-                        [if (eq? (caaddr BST) (n)) 
-                            (derecha) 
-                            ()
-                        ]
-                    )                
-                )
-            ])
-            (contador BST 0)
-        )    
+        (display "Prueba")
     )
 )
-
-'(8 (3 (1 () ()) (6 (4 () ()) (7 () ()))) (10 () (14 (13 () ()) ())))
 
 #|---------------------------------------------------------------------------------
 Punto 15
