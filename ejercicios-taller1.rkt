@@ -3,6 +3,16 @@ Emily Nuñez - 2240156|#
 
 #lang eopl
 
+#|Funciones Auxiliares|#
+(define juntarListas
+    (lambda (L1 L2)
+        (cond
+            [(null? L1) L2]
+            [else (cons (car L1) (juntarListas (cdr L1) L2))]
+        )
+    )
+)
+
 #|Punto 1
 invert: List x predicado -> List
 usage: (invert L P) = Lista con pares invertidos (y,x) que cumplen el predicado P
@@ -43,7 +53,7 @@ Casos de prueba:
     (lambda (L)
         (cond
             [(null? L) L]
-            [else (append (list(list (car L))) (down (cdr L)))]
+            [else (juntarListas (list(list (car L))) (down (cdr L)))]
         ) 
     )
 )
@@ -66,9 +76,9 @@ Casos de prueba:
                     (cond
                         [(null? L) L]
                         [(and(eq? n i) (P (car L)))
-                            (append (list x) (contador (cdr L) n x P (+ i 1)))
+                            (juntarListas (list x) (contador (cdr L) n x P (+ i 1)))
                         ]
-                        [else (append (list (car L)) (contador (cdr L) n x P (+ i 1)))]
+                        [else (juntarListas (list (car L)) (contador (cdr L) n x P (+ i 1)))]
                     )                
                 )
             ])
@@ -91,7 +101,7 @@ Casos de prueba:
         (cond
             [(null? L) empty]
             [(P (car L)) 
-                (append (list (car L)) (filter-in P (cdr L)))
+                (juntarListas (list (car L)) (filter-in P (cdr L)))
             ]
             [else (filter-in P (cdr L))]
         )   
@@ -141,12 +151,12 @@ Casos de prueba:
         (cond
             [(null? L) L]
             [(eqv? E1 (car L)) 
-                (append (list E2) (swapper E1 E2 (cdr L)))
+                (juntarListas (list E2) (swapper E1 E2 (cdr L)))
             ]
             [(eqv? E2 (car L)) 
-                (append (list E1) (swapper E1 E2 (cdr L)))
+                (juntarListas (list E1) (swapper E1 E2 (cdr L)))
             ]
-            [else (append (list (car L)) (swapper E1 E2 (cdr L)))]
+            [else (juntarListas (list (car L)) (swapper E1 E2 (cdr L)))]
         )    
     )
 )
@@ -174,7 +184,7 @@ Casos de prueba:
                 (lambda (L1 L2)
                     (cond
                         [(null? L1) L1]
-                        [else (append (recorrerL2 (car L1) L2) (recorrerL1 (cdr L1) L2))]
+                        [else (juntarListas (recorrerL2 (car L1) L2) (recorrerL1 (cdr L1) L2))]
                     )                
                 )
             ])
@@ -211,7 +221,7 @@ Casos de prueba:
                 (lambda (L1 L2)
                     (cond
                         [(null? L1) L1]
-                        [else (append (recorrerL2 (car L1) L2) (recorrerL1 (cdr L1) L2))]
+                        [else (juntarListas (recorrerL2 (car L1) L2) (recorrerL1 (cdr L1) L2))]
                     )                
                 )
             ])
@@ -262,7 +272,7 @@ Casos de prueba:
         (cond
             [(null? L) L]
             [(list? (car L))
-                (append (car L) (up(cdr L)))
+                (juntarListas (car L) (up(cdr L)))
             ]
             [else (cons (car L) (up(cdr L)))]
         )    
@@ -342,9 +352,29 @@ cadenas de texto left y right. Si el número no se encuentra, retorna una lista 
 |#
 (define path
     (lambda (n BST)
-        (display "Prueba")    
+        (letrec
+            ([contador
+                (lambda (BST i)
+                    (cond
+                        [(null? BST) BST]
+                        [(eq? (car BST) (n)) (BST)]
+                        [if (eq? (caadr BST) (n)) 
+                            (izquierda) 
+                            ()
+                        ]
+                        [if (eq? (caaddr BST) (n)) 
+                            (derecha) 
+                            ()
+                        ]
+                    )                
+                )
+            ])
+            (contador BST 0)
+        )    
     )
 )
+
+'(8 (3 (1 () ()) (6 (4 () ()) (7 () ()))) (10 () (14 (13 () ()) ())))
 
 #|---------------------------------------------------------------------------------
 Punto 15
@@ -410,7 +440,7 @@ el resultado es representado por una lista
 |#
 (define prod-scalar-matriz
     (lambda (mat vec)
-        (display "Prueba")    
+        (display "Prueba")
     )
 )
 
