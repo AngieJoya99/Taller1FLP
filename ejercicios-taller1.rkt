@@ -225,13 +225,28 @@ Punto 9
 inversions: List -> Int
 usage: (inversions L) = número de Inversiones de L. Se dice una pareja (a1 a2) es inversión si la
 posición en la lista de a1 es menor a la de a2 y a1 es mayor que a2
+Casos de prueba: 
+(inversions '(2 3 8 6 1))
+(inversions '(1 2 3 4))
+(inversions '(3 2 1))
 |#
 (define inversions
     (lambda (L)
-        (display "Prueba")    
+        (define aux
+            (lambda (e L2 cont)
+                (cond 
+                    [(null? L2) cont]
+                    [(> e (car L2)) (aux e (cdr L2) (+ cont 1))]
+                    [else (aux e (cdr L2) cont)]
+                )
+            )
+        )
+        (if (null? L)
+            0
+            (+ (aux (car L) (cdr L) 0) (inversions (cdr L))) 
+        )    
     )
 )
-
 #|---------------------------------------------------------------------------------
 Punto 10
 up: List -> Lista
@@ -279,10 +294,19 @@ Punto 12
 filter-acum: Int x Int x función x Int x predicado -> Int
 usage: (filter-acum a b F acum filter) = aplicar F a todos los enteros entre a y b (cerrado)
 que cumplen con el predicado filter, el resultado se acumula en acum y se retorna al final
+Casos de prueba:
+(filter-acum 1 10 + 0 odd?)
+(filter-acum 1 10 + 0 even?)
+(filter-acum 1 10 * 1 even?)
+(filter-acum 1 10 * 1 odd?)
 |#
 (define filter-acum
     (lambda (a b F acum filter)
-        (display "Prueba")    
+        (cond
+            [(equal? a (+ b 1)) acum ]
+            [(filter a) (filter-acum (+ a 1) b F (F a acum) filter)]
+            [else (filter-acum (+ a 1) b F acum filter)]
+        )    
     )
 )
 
@@ -294,10 +318,19 @@ en lrators a los valores en lrands
 
 Casos de prueba: 
 (operate (list + * + - *) '(1 2 8 4 11 6))
+(operate (list *) '(4 5))
 |#
 (define operate
     (lambda (lrators lrands)
-        (display "Prueba") 
+        (define aux
+            (lambda (lrat2 lran2 acumulador)
+                (if (null? lrat2) 
+                    acumulador
+                    (aux (cdr lrat2) (cdr lran2) ((car lrat2) acumulador (car lran2)))
+                )
+            )
+        )
+        (aux lrators (cdr lrands) (car lrands))
     )
 )
 
@@ -318,12 +351,45 @@ Punto 15
 count-odd-and-even: arbol-binario -> List
 usage: (count-odd-and-even arbol) = Lista con dos elementos, el primero indica la cantidad de
 números pares en el árbol y el segundo la cantidad de impares
+
+Casos de prueba:
+(count-odd-and-even '(14 (7 () (12 () ()))(26 (20 (17 () ())())(31 () ()))))
+
 |#
 (define count-odd-and-even
     (lambda (arbol)
-        (display "Prueba")    
+        (define cantidad-int 
+            (lambda (arbol even odd)
+                (cond
+                    [(number? arbol)
+                        (if (even? arbol)
+                        (list (+ even 1) odd)
+                        (list even (+ odd 1)))]
+                    [(list? arbol)
+                        (define aux 
+                            (lambda (arbol2 even odd)
+                                (if (null? arbol2)
+                                    (list even odd)
+                                    (letrec
+                                        (
+                                            (arbol-num (car arbol2))
+                                            (contador (cantidad-int arbol-num even odd))
+                                        )
+                                        (aux (cdr arbol2) (car contador) (cadr contador))
+                                    )
+                                )
+                            )
+                        )
+                        (aux arbol even odd)
+                    ]
+                    [else (list even odd)]
+                )
+            )
+        )
+        (cantidad-int arbol 0 0)
     )
 )
+
 
 #|---------------------------------------------------------------------------------
 Punto 16
