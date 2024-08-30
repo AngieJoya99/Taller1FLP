@@ -447,10 +447,26 @@ Punto 17
 prod-scalar-matriz: List x List -> List
 usage: (prod-scalar-matriz mat vec) = Calcula la multiplicación entre la matriz mat y el vector vec,
 el resultado es representado por una lista
+Casos de prueba:
+(prod-scalar-matriz '((1 1) (2 2)) '(2 3))
+(prod-scalar-matriz '((1 1) (2 2) (3 3)) '(2 3))
+(prod-scalar-matriz '((1 2 4) (2 4 7) (4 5 7)) '(2 4 5))
+(prod-scalar-matriz '((1 2 4 5) (2 4 7 8) (4 5 7 10)) '(2 4 5 10))
 |#
 (define prod-scalar-matriz
     (lambda (mat vec)
-        (display "Prueba")
+        (define aux
+            (lambda (L1 L2)
+                (if (null? L1)
+                    '()
+                    (cons (* (car L1) (car L2))(aux (cdr L1) (cdr L2)))
+                )
+            )
+        )
+        (if (null? mat)
+            '()
+            (cons (aux (car mat) vec)(prod-scalar-matriz (cdr mat) vec))
+        )
     )
 )
 
