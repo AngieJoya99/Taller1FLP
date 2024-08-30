@@ -356,12 +356,12 @@ Casos de prueba:
 (path 10 '(8 (3 (1 () ()) (6 (4 () ()) (7 () ()))) (10 () (14 (13 () ()) ()))))
 |#
 (define path
-    (lambda (n bst)
+    (lambda (n BST)
         (cond
-            [(null? bst) '()]
-            [(= n (car bst)) '()]
-            [(< n (car bst)) (cons 'left (path n (cadr bst)))]
-            [(> n (car bst)) (cons 'right (path n (caddr bst)))]
+            [(null? BST) '()]
+            [(= n (car BST)) '()]
+            [(< n (car BST)) (cons 'left (path n (cadr BST)))]
+            [(> n (car BST)) (cons 'right (path n (caddr BST)))]
             [else '()]
         )
     )
@@ -477,6 +477,24 @@ usage: (pascal N) = Calcula la fila N del triángulo de pascal, el resultado se 
 |#
 (define pascal
     (lambda (N)
-        (display "Prueba")    
+        (letrec
+            ([sumarLista
+                (lambda (L)
+                    (cond
+                        [(null? (cdr L)) L]
+                        [else (juntarListas (list (+ (car L)(cadr L))) (sumarLista (cdr L)))]
+                    )
+                )
+            ]
+            [generarLista
+                (lambda (i L)
+                    (cond
+                        [(equal? i N) (cons 1 L)]
+                        [else (generarLista(+ i 1) (sumarLista (cons 1 L)))]
+                    )
+                )
+            ])
+            (generarLista 1 '())
+        )
     )
 )
