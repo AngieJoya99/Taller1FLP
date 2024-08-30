@@ -313,7 +313,7 @@ Casos de prueba:
 (define filter-acum
     (lambda (a b F acum filter)
         (cond
-            [(equal? a (+ b 1)) acum ]
+            [(> a b) acum ]
             [(filter a) (filter-acum (+ a 1) b F (F a acum) filter)]
             [else (filter-acum (+ a 1) b F acum filter)]
         )    
@@ -348,11 +348,22 @@ Casos de prueba:
 Punto 14
 path: Int x arbol-binario -> List
 usage: (path n BST) = Lista con la ruta para llegar de la raíz al número n indicado por las
-cadenas de texto left y right. Si el número no se encuentra, retorna una lista vacía
+cadenas de texto left y right. Si el número es encontrado en el nodo raiz, retorna una lista vacía
+Casos de prueba:
+(path 17 '(14 (7 () (12 () ()))(26 (20 (17 () ())())(31 () ()))))
+(path 7 '(8 (3 (1 () ()) (6 (4 () ()) (7 () ()))) (10 () (14 (13 () ()) ()))))
+(path 18 '(14 (7 () (12 () ()))(26 (20 (17 () ())())(31 () ()))))
+(path 10 '(8 (3 (1 () ()) (6 (4 () ()) (7 () ()))) (10 () (14 (13 () ()) ()))))
 |#
 (define path
-    (lambda (n BST)
-        (display "Prueba")
+    (lambda (n bst)
+        (cond
+            [(null? bst) '()]
+            [(= n (car bst)) '()]
+            [(< n (car bst)) (cons 'left (path n (cadr bst)))]
+            [(> n (car bst)) (cons 'right (path n (caddr bst)))]
+            [else '()]
+        )
     )
 )
 
@@ -364,7 +375,9 @@ números pares en el árbol y el segundo la cantidad de impares
 
 Casos de prueba:
 (count-odd-and-even '(14 (7 () (12 () ()))(26 (20 (17 () ())())(31 () ()))))
-
+(count-odd-and-even '(22 (11 () (18 () (2 () (7 () ())))) (44 (30 (13 () (17 () ())) ()) (27 () ()))))
+(count-odd-and-even '(22 (11 () (18 () (2 () (7 () ())))) (44 (30 (13 () ()) ()) (27 () ()))))
+(count-odd-and-even '(19 (25 () (22 () ())) (35 (28 (14 () ()) ()) (9 () ()))))
 |#
 (define count-odd-and-even
     (lambda (arbol)
@@ -408,7 +421,24 @@ usage: (simpson-rule f a b n) = Calcula el resultado de la integral de f entre a
 |#
 (define simpson-rule
     (lambda (f a b n)
-        (display "Prueba")    
+        (letrec
+            (
+                (h  (/ (- b a) n))
+                (aux
+                    (lambda (f2 a2 n2 k acum)
+                        (cond
+                            [(= k 0)(aux f2 a n2 (+ k 1) (+ acum (f2 (+ a2 (* k h )))))]
+                            [(> k n2) acum]
+                            [(= k n2)(aux f2 a n2 (+ k 1) (+ acum (f2 (+ a2 (* k h )))))]
+                            [(even? k) (aux f2 a n2 (+ k 1) (+ acum (* 2 (f2 (+ a2 (* k h ))))))]
+                            [(odd? k) (aux f2 a n2 (+ k 1) (+ acum (* 4 (f2 (+ a2 (* k h ))))))]
+                            [else acum]
+                        )
+                    )
+                )
+            )
+            (* (/ h 3) (aux f a n 0 0))
+        )
     )
 )
 
