@@ -3,7 +3,14 @@ Emily Nuñez - 2240156|#
 
 #lang eopl
 
-#|Funciones Auxiliares|#
+#|Función Auxiliar
+juntarListas: List x List -> List
+usage: (juntarListas L1 L2) = Lista resultante de juntar los elementos de L1 con los elementos de L2
+
+Gramática:
+<lista> := ()
+        := (<valor-de-scheme> <lista>)
+|#
 (define juntarListas
     (lambda (L1 L2)
         (cond
