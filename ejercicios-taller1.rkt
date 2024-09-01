@@ -265,6 +265,9 @@ Punto 9
 inversions: List -> Int
 usage: (inversions L) = número de Inversiones de L. Se dice una pareja (a1 a2) es inversión si la
 posición en la lista de a1 es menor a la de a2 y a1 es mayor que a2
+
+Gramática: <lista> := () | (<int> <lista>)
+
 Casos de prueba: 
 (inversions '(2 3 8 6 1))
 (inversions '(1 2 3 4))
@@ -272,6 +275,11 @@ Casos de prueba:
 |#
 (define inversions
     (lambda (L)
+        #|
+          aux : Int x List x Int -> Int
+          usage: Función que recorre una lista y cuenta cuántos elementos son menores que e, 
+          incrementando el contador cont en cada caso. Devuelve el contador final cuando recibe una lista vacía.
+        |#
         (define aux
             (lambda (e L2 cont)
                 (cond 
@@ -341,6 +349,11 @@ Punto 12
 filter-acum: Int x Int x función x Int x predicado -> Int
 usage: (filter-acum a b F acum filter) = aplicar F a todos los enteros entre a y b (cerrado)
 que cumplen con el predicado filter, el resultado se acumula en acum y se retorna al final
+
+Gramática: <lambda-exp> ::= <identificador>
+::= (lambda (<identificador>) <lambda-exp>)
+::= (<lambda-exp> <lambda-exp>)
+
 Casos de prueba:
 (filter-acum 1 10 + 0 odd?)
 (filter-acum 1 10 + 0 even?)
@@ -363,12 +376,20 @@ operate: List x List -> Int
 usage: (operate lrators lrands) = Resultado de aplicar sucesivamente las operaciones 
 en lrators a los valores en lrands
 
+Gramática: <lista> := () | (<int> <lista>)
+
 Casos de prueba: 
 (operate (list + * + - *) '(1 2 8 4 11 6))
 (operate (list *) '(4 5))
 |#
 (define operate
     (lambda (lrators lrands)
+        #|
+          aux: List x List x Int -> Int
+          usage: Recorre las listas simultáneamente. En cada paso, aplica la función contenida en la 
+          cabeza de lrat2 al acumulador y al primer elemento de lran2. Cuando la primera lista (lrat2)
+          se vacía, devuelve el valor acumulado.
+        |#
         (define aux
             (lambda (lrat2 lran2 acumulador)
                 (if (null? lrat2) 
@@ -386,6 +407,11 @@ Punto 14
 path: Int x arbol-binario -> List
 usage: (path n BST) = Lista con la ruta para llegar de la raíz al número n indicado por las
 cadenas de texto left y right. Si el número es encontrado en el nodo raiz, retorna una lista vacía
+Casos de prueba:
+
+Gramática: <arbol-binario> := (arbol-vacio) empty
+:= (nodo) numero <arbol-binario> <arbol-binario>
+
 Casos de prueba:
 (path 17 '(14 (7 () (12 () ()))(26 (20 (17 () ())())(31 () ()))))
 (path 7 '(8 (3 (1 () ()) (6 (4 () ()) (7 () ()))) (10 () (14 (13 () ()) ()))))
@@ -410,6 +436,9 @@ count-odd-and-even: arbol-binario -> List
 usage: (count-odd-and-even arbol) = Lista con dos elementos, el primero indica la cantidad de
 números pares en el árbol y el segundo la cantidad de impares
 
+Gramática: <arbol-binario> := (arbol-vacio) empty
+:= (nodo) numero <arbol-binario> <arbol-binario>
+
 Casos de prueba:
 (count-odd-and-even '(14 (7 () (12 () ()))(26 (20 (17 () ())())(31 () ()))))
 (count-odd-and-even '(22 (11 () (18 () (2 () (7 () ())))) (44 (30 (13 () (17 () ())) ()) (27 () ()))))
@@ -418,6 +447,12 @@ Casos de prueba:
 |#
 (define count-odd-and-even
     (lambda (arbol)
+        #|
+          cantidad-int: arbol-binario x Int x Int -> List
+          usage: recorre un árbol binario y cuenta cuántos números enteros en el árbol son pares
+          y cuántos son impares. Devuelve una lista donde el primer elemento es la cantidad de 
+          números pares y el segundo es la cantidad de números impares.
+        |#
         (define cantidad-int 
             (lambda (arbol even odd)
                 (cond
@@ -426,6 +461,12 @@ Casos de prueba:
                         (list (+ even 1) odd)
                         (list even (+ odd 1)))]
                     [(list? arbol)
+                        #|
+                          aux: arbol-binario x Int x Int -> List
+                          usage: Recorre recursivamente una lista (que representa un árbol binario) para 
+                          contar cuántos números son pares y cuántos son impares. La función acumula 
+                          estos conteos y los devuelve como una lista de dos elementos
+                        |#
                         (define aux 
                             (lambda (arbol2 even odd)
                                 (if (null? arbol2)
@@ -455,6 +496,14 @@ Casos de prueba:
 Punto 16
 simpson-rule: función x Int x Int x Int -> Int
 usage: (simpson-rule f a b n) = Calcula el resultado de la integral de f entre a y b para un entero par n
+
+Gramática: <lambda-exp> ::= <identificador>
+::= (lambda (<identificador>) <lambda-exp>)
+::= (<lambda-exp> <lambda-exp>)
+
+Casos de prueba:
+(simpson-rule (lambda (x) (* x (* x x))) 1 5 8)
+(simpson-rule (lambda (x) x) 1 5 12)
 |#
 (define simpson-rule
     (lambda (f a b n)
@@ -484,6 +533,9 @@ Punto 17
 prod-scalar-matriz: List x List -> List
 usage: (prod-scalar-matriz mat vec) = Calcula la multiplicación entre la matriz mat y el vector vec,
 el resultado es representado por una lista
+
+Gramática: <lista> := () | (<int> <lista>)
+
 Casos de prueba:
 (prod-scalar-matriz '((1 1) (2 2)) '(2 3))
 (prod-scalar-matriz '((1 1) (2 2) (3 3)) '(2 3))
@@ -492,6 +544,12 @@ Casos de prueba:
 |#
 (define prod-scalar-matriz
     (lambda (mat vec)
+        #|
+          aux: List x List -> List
+          usage:  Recorre ambas listas simultáneamente, multiplicando los elementos correspondientes 
+          de L1 y L2. Construye una nueva lista con los productos de estos pares utilizando cons.
+          Posteriormente, cuando la lista L1 se vacia, la funcione retorna una lista vacía.
+        |#
         (define aux
             (lambda (L1 L2)
                 (if (null? L1)
