@@ -7,9 +7,7 @@ Emily Nuñez - 2240156|#
 juntarListas: List x List -> List
 usage: (juntarListas L1 L2) = Lista resultante de juntar los elementos de L1 con los elementos de L2
 
-Gramática:
-<lista> := ()
-        := (<valor-de-scheme> <lista>)
+Gramática: <lista> := () | (<valor-de-scheme> <lista>)
 |#
 (define juntarListas
     (lambda (L1 L2)
@@ -20,11 +18,12 @@ Gramática:
     )
 )
 
-#|Punto 1
+#|---------------------------------------------------------------------------------
+Punto 1
 invert: List x predicado -> List
 usage: (invert L P) = Lista con pares invertidos (y,x) que cumplen el predicado P
 
-Gramática:
+Gramática: <lista> := () | ((<int> <int>) <lista>)
 
 Casos de prueba:
 (invert '((3 2) (4 2) (1 5) (2 8)) even?)
@@ -51,9 +50,12 @@ Punto 2
 down: List -> List
 usage: (down L) = Lista con cada elemento en un nivel más de paréntesis
 
+Gramática: <lista> := () | (<valor-de-scheme> <lista>)
+
 Casos de prueba:
-(down '(1 2 3))
-(down '((una) (buena) (idea)))
+(down '(8 45 20 (10 8) 5))
+(down '())
+(down '((caso) (de) (Prueba)))
 (down '(un (objeto (mas)) complicado))
 |#
 (define down
@@ -71,9 +73,12 @@ list-set: List x Int x List x predicado -> List
 usage: (list-set L n x P) = Lista con el elemento x añadido en la posición n de L
 el elemento original en esta posición cumple el predicado P
 
+Gramática: <lista> := () | (<valor-de-scheme> <lista>)
+
 Casos de prueba:
-(list-set '(5 8 7 6) 2 '(1 2) odd?)
-(list-set '(5 8 7 6) 2 '(1 2) even?)
+(list-set '(1 2 3 4 5) 2 '(8 30) odd?)
+(list-set '(4 0 2 9 6) 1 '(9) zero?)
+(list-set '(5 -2 8 -7 -25 -96) 0 '(9) negative?)
 |#
 (define list-set
     (lambda (L n x P)
@@ -99,9 +104,13 @@ Punto 4
 filter-in: predicado x List -> List
 usage: (filter-in P L) = Lista con los elementos de L que cumplen el predicado P
 
+Gramática: <lista> := () | (<valor-de-scheme> <lista>)
+
 Casos de prueba:
-(filter-in number? '(a 2 (1 3) b 7))
-(filter-in string? '(a b u "univalle" "racket" "flp" 28 90 (1 2 3)))
+(filter-in number? '(z u 15 (1 2 3) 8 10 k))
+(filter-in negative? '(1 -5 2 -8 -9 -14 5 0 1))
+(filter-in zero? '(1 2 3 4 5))
+(filter-in string? '(a b c "caso" "de" 5 "prueba" (1 3)))
 |#
 (define filter-in
     (lambda (P L)
@@ -117,14 +126,17 @@ Casos de prueba:
 
 #|---------------------------------------------------------------------------------
 Punto 5
-list-index: predicado x List -> SchemeVal
+list-index: predicado x List -> int | #f
 usage: (list-index P L) = posición del primer elemento de L que cumple con P, o #f si no hay ningún
 elemento que lo cumpla
 
+Gramática: <lista> := () | (<valor-de-scheme> <lista>)
+
 Casos de prueba: 
-(list-index number? '(a 2 (1 3) b 7))
-(list-index symbol? '(a (b c) 17 foo))
-(list-index symbol? '(1 2 (a b) 3))
+(list-index number? '(a x 5 6 (1 2 3) h -7))
+(list-index number? '(a b c d e))
+(list-index symbol? '(a (b c) @ foo))
+(list-index negative? '(0 1 4 5 -9 8 -4))
 |#
 (define list-index
     (lambda (P L)
@@ -133,7 +145,7 @@ Casos de prueba:
                 (lambda (P L n)
                     (cond
                         [(null? L) #f]
-                        [(P (car L)) (cons n '())]
+                        [(P (car L)) n]
                         [else (contador P (cdr L)(+ n 1))]
                     )                
                 )
@@ -147,11 +159,14 @@ Casos de prueba:
 Punto 6
 swapper: SchemeVal x SchemeVal x List -> List
 usage: (swapper E1 E2 L) = Lista con las instancias de E1 reemplazadas por E2
+y las instancias de E2 reemplazadas por E1
+
+Gramática: <lista> := () | (<valor-de-scheme> <lista>)
 
 Casos de prueba: 
-(swapper 'a 'd '(a b c d))
-(swapper 'a 'd '(a d () c d))
-(swapper 'x 'y '(y y x y x y x x y))
+(swapper 'a 'z '(a b c z))
+(swapper 'a '@ '(n k a g h a l i (a b)))
+(swapper 0 1 '(0 1 0 1 1 0 0 1))
 |#
 (define swapper
     (lambda (E1 E2 L)
@@ -173,8 +188,12 @@ Punto 7
 cartesian-product: List x List -> List
 usage: (cartesian-product L1 L2) = Lista de tuplas con el producto cartesiano entre L1 y L2
 
+Gramática: <lista> := () | (<valor-de-scheme> <lista>)
+
 Casos de prueba:
-(cartesian-product '(a b c) '(x y))
+(cartesian-product '(a b c) '(1 2 3))
+(cartesian-product '(0 1 0) '(1 0 1))
+(cartesian-product '(z y x) '(@ 1 "prueba"))
 |#
 (define cartesian-product
     (lambda (L1 L2)
@@ -206,9 +225,13 @@ mapping: función x List x List -> List
 usage: (mapping F L1 L2) = Lista de pares (a,b) siendo a elemento de L1 y b elemento de L2, 
 para los cuales evaluar a en F retorna b
 
+Gramática: <lista> := () | (<int> <lista>)
+
 Casos de prueba: 
 (mapping (lambda (d) (* d 2)) (list 1 2 3) (list 2 4 6))
-((1 2) (2 4) (3 6))
+(mapping (lambda (x) (+ x 1)) '(1 2 3) '(2 4 5))
+(mapping (lambda (x) (* x 2)) '(1 2 3) '(5 7 9))
+(mapping (lambda (x) x) '(1 2 3) '(3 2 1))
 |#
 (define mapping
     (lambda (F L1 L2)
@@ -218,7 +241,7 @@ Casos de prueba:
                     (cond
                         [(null? L2) L2]
                         [else (if (equal? (F x) (car L2))
-                            (list (list x (car L2)))  ; Si F(x) es igual a (car L2), devuelve el par (x (car L2)) como una lista
+                            (list (list x (car L2)))
                             (recorrerL2 x (cdr L2))
                         )]
                     )                                   
@@ -270,9 +293,13 @@ up: List -> Lista
 usage: (up L) = Lista con cada elemento en un nivel menos de paréntesis. Si el elemento no tiene
 paréntesis, no se le hacen modificaciones
 
+Gramática: <lista> := () | (<valor-de-scheme> <lista>)
+
 Casos de prueba:
-(up '((1 2) (3 4)))
-(up '((x (y)) z))
+(up '((1 2) (3 4) (5 6)))
+(up '((a (b)) c))
+(up '())
+(up '(1 2 3 4 5))
 |#
 (define up
     (lambda (L)
@@ -292,9 +319,12 @@ zip: función x List x List -> List
 usage: (zip F L1 L2) = Lista donde la cada posición i es el resultado de evaluar F con el elemento i
 de L1 y el elemento i de L2
 
+Gramática: <lista> := () | (<int> <lista>)
+
 Casos de prueba:
-(zip + '(1 4) '(6 2))
-(zip * '(11 5 6) '(10 9 8))
+(zip + '(2 4) '(6 8))
+(zip * '(8 4 9) '(5 6 9))
+(zip / '(10 80 9 0) '(5 4 3 500))
 |#
 (define zip
     (lambda (F L1 L2)
@@ -481,6 +511,15 @@ Casos de prueba:
 Punto 18
 pascal: Int -> List
 usage: (pascal N) = Calcula la fila N del triángulo de pascal, el resultado se representa por una lista
+
+Gramática: <lista> := () | (<int> <lista>)
+
+Casos de prueba:
+(pascal 5)
+(pascal 1)
+(pascal 2)
+(pascal 10)
+
 |#
 (define pascal
     (lambda (N)
