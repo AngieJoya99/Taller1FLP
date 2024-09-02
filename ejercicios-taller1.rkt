@@ -70,7 +70,7 @@ Casos de prueba:
 #|---------------------------------------------------------------------------------
 Punto 3
 list-set: List x Int x List x predicado -> List
-usage: (list-set L n x P) = Lista con el elemento x añadido en la posición n de L
+usage: (list-set L n x P) = Lista con el elemento x añadido en la posición n de L si
 el elemento original en esta posición cumple el predicado P
 
 Gramática: <lista> := () | (<valor-de-scheme> <lista>)
@@ -83,6 +83,9 @@ Casos de prueba:
 (define list-set
     (lambda (L n x P)
         (letrec
+            #|contador: List x Int x List x predicado x Int -> List
+            usage: (contador L n x P i) = Lista con el elemento x añadido en la posición n de L
+            el elemento original en esta posición cumple el predicado P y el contador i es igual a n|#
             ([contador
                 (lambda (L n x P i)
                     (cond
@@ -141,6 +144,9 @@ Casos de prueba:
 (define list-index
     (lambda (P L)
         (letrec
+            #|contador: predicado x List x Int-> Int | #f
+            usage: (contador P L n) = valor de la posición n del primer elemento de L que cumple con P, o #f si no hay ningún
+            elemento que lo cumple|#
             ([contador
                 (lambda (P L n)
                     (cond
@@ -198,6 +204,8 @@ Casos de prueba:
 (define cartesian-product
     (lambda (L1 L2)
         (letrec
+            #|recorrerL2: valor-de-scheme x List -> List 
+            usage: (recorrerL2 x L2) = Lista de tuplas con x y los elementos de L2|#
             ([recorrerL2
                 (lambda (x L2)
                     (cond
@@ -206,6 +214,8 @@ Casos de prueba:
                     )                                   
                 )
             ]
+            #|recorrerL1: List x List -> List 
+            usage: (recorrerL1 L1 L2) = Lista de tuplas con los elementos de L1 y L2|#
             [recorrerL1
                 (lambda (L1 L2)
                     (cond
@@ -236,6 +246,9 @@ Casos de prueba:
 (define mapping
     (lambda (F L1 L2)
         (letrec
+            #|recorrerL2: Int x List -> List 
+            usage: (recorrerL2 x L2) = Lista de tuplas con x y los elementos de L2 para los cuales evaluar
+            x en F retorna el elemento de L2|#
             ([recorrerL2
                 (lambda (x L2)
                     (cond
@@ -247,6 +260,9 @@ Casos de prueba:
                     )                                   
                 )
             ]
+            #|recorrerL1: List x List -> List 
+            usage: (recorrerL1 L1 L2) = Lista de tuplas con los elementos de L1 y L2 para los cuales evaluar
+            el elemento de L1 en F retorna el elemento de L2|#
             [recorrerL1
                 (lambda (L1 L2)
                     (cond
@@ -510,6 +526,13 @@ Casos de prueba:
         (letrec
             (
                 (h  (/ (- b a) n))
+                #|
+                  aux: funcion x Int x Int x Int x Int -> Int
+                  usage: Recorre el rango de k desde 0 hasta n2, aplicando la función f2 a cada punto 
+                  calculado como a2 + k * h. La función agrega el resultado al acumulador acum, con 
+                  distintos factores de multiplicación (1, 2, o 4) dependiendo de si k es par o impar. 
+                  Cuando k es mayor a n2, la función devuelve el acumulador final.
+                |#
                 (aux
                     (lambda (f2 a2 n2 k acum)
                         (cond
@@ -582,6 +605,8 @@ Casos de prueba:
 (define pascal
     (lambda (N)
         (letrec
+            #|sumarLista: List -> List
+            usage: (sumarLista L) = Calcula la línea del triangulo de Pascal siguiente a la de L |#
             ([sumarLista
                 (lambda (L)
                     (cond
@@ -590,6 +615,9 @@ Casos de prueba:
                     )
                 )
             ]
+            #|generarLista: Int x List -> List
+            usage: (generarLista i L) = Genera la línea N del triangulo de pascal usando un contador i
+            para verificar que la lista generada es la que se solicitó|#
             [generarLista
                 (lambda (i L)
                     (cond
